@@ -207,7 +207,7 @@ jobs:
       - name: build
         # Spawning processes seems to have a big overhead on this platform. Use a somewhat larger number of parallel processes to compensate for that.
         run: |
-          make -C ./.build all -j8 V=1
+          make -C ./.build all -j8 V=1 -j$(nproc)
 
       - name: ccache status
         continue-on-error: true
