@@ -220,7 +220,7 @@ jobs:
         run: cat ./.build/config.log
 
       - name: build
-        run: XDG_RUNTIME_DIR=$RUNNER_TEMP make -C ./.build -j $(nproc) all V=1
+        run: XDG_RUNTIME_DIR=$RUNNER_TEMP make -C ./.build -j$(nproc) all V=1
 
       - name: ccache status
         run: ccache -s
