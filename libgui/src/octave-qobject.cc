@@ -473,7 +473,11 @@ base_qobject::start_main_thread ()
   // the interpreter until after the main window and QApplication are
   // running to prevent race conditions.
 
+#if defined (QTIMER_SINGLESHOT_ACCEPTS_POINTER_TO_MEMBER_FUNCTION)
   QTimer::singleShot (0, m_interpreter_qobj, &interpreter_qobject::execute);
+#else
+  QTimer::singleShot (0, m_interpreter_qobj, SLOT (execute ()));
+#endif
 
   m_interpreter_qobj->moveToThread (m_main_thread);
 
