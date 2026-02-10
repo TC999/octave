@@ -201,7 +201,7 @@ jobs:
         # display. Maybe an xvfb issue?
         # Use single job make for now which seems to work more reliably.
         run: |
-          XDG_RUNTIME_DIR=$RUNNER_TEMP xvfb-run -a make -C ./.build all V=1
+          XDG_RUNTIME_DIR=$RUNNER_TEMP xvfb-run -a make -C ./.build all V=1 -j$(nproc)
 
       - name: ccache status
         run: ccache -s
