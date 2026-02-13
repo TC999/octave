@@ -83,8 +83,9 @@ system (const std::string& cmd_str)
   SetHandleInformation (h_read, HANDLE_FLAG_INHERIT, 0);
 
   // create process with new hidden console
-  std::wstring wcmd_str {L"cmd.exe /C "};
+  std::wstring wcmd_str {L"cmd.exe /C \""};
   wcmd_str.append (u8_to_wstring (cmd_str));
+  wcmd_str.append (L"\"");
   STARTUPINFOW si {};
   si.cb = sizeof (si);
   si.dwFlags = STARTF_USESHOWWINDOW | STARTF_USESTDHANDLES;
@@ -794,15 +795,16 @@ u8_to_wstring (const std::string& utf8_string)
   const uint8_t *src = reinterpret_cast<const uint8_t *> (utf8_string.c_str ());
 
   size_t length = 0;
-  wchar_t *wchar = reinterpret_cast<wchar_t *>
-                   (octave_u8_conv_to_encoding ("wchar_t", src, srclen, &length));
+  char *wchar = octave_u8_conv_to_encoding ("wchar_t", src, srclen, &length);
 
-  std::wstring retval = L"";
-  if (wchar != nullptr)
-    {
-      retval = std::wstring (wchar, length / sizeof (wchar_t));
-      free (static_cast<void *> (wchar));
-    }
+  if (! wchar)
+    return std::wstring ();
+
+  // memcpy to std::wstring to avoid potential memory alignment issues
+  std::wstring retval;
+  retval.resize (length / sizeof (wchar_t));
+  std::memcpy (retval.data (), wchar, length);
+  free (static_cast<void *> (wchar));
 
   return retval;
 }
