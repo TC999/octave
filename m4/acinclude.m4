@@ -336,10 +336,10 @@ AC_DEFUN([OCTAVE_CHECK_CXSPARSE_VERSION_OK], [
   fi
 ])
 dnl
-dnl Check whether the FFTW library supports multi-threading. This macro
+dnl Check whether the FFTW library supports multi-threading.  This macro
 dnl should be called once per FFTW precision passing in the library
-dnl variant (e.g. "fftw3") and a function in the thread support API
-dnl (e.g. "fftw_plan_with_nthreads"). Depending on how FFTW was built,
+dnl variant (e.g., "fftw3") and a function in the thread support API
+dnl (e.g., "fftw_plan_with_nthreads").  Depending on how FFTW was built,
 dnl the thread functions could be compiled into the main FFTW library or
 dnl could be a separate add-on library that is passed to the linker
 dnl ahead of the main FFTW library.
@@ -1051,8 +1051,7 @@ AC_DEFUN([OCTAVE_CHECK_LIB_ARPACK_OK_1], [
     AC_RUN_IFELSE([AC_LANG_PROGRAM([[
 
 #include <cfloat>
-
-#include <stdint.h>
+#include <cstdint>
 
 typedef int F77_RET_T;
 
@@ -1679,7 +1678,7 @@ AC_DEFUN([OCTAVE_CHECK_LIB_PCRE_OK], [
     [octave_cv_lib_pcre_ok],
     [AC_LANG_PUSH(C++)
     AC_RUN_IFELSE([AC_LANG_PROGRAM([[
-        #include <stdio.h>
+        #include <cstdio>
         #if defined (HAVE_PCRE_H)
         #  include <pcre.h>
         #elif defined (HAVE_PCRE_PCRE_H)
@@ -1713,7 +1712,7 @@ AC_DEFUN([OCTAVE_CHECK_LIB_PCRE2_OK], [
     [octave_cv_lib_pcre2_ok],
     [AC_LANG_PUSH(C++)
     AC_RUN_IFELSE([AC_LANG_PROGRAM([[
-        #include <stdio.h>
+        #include <cstdio>
         #define PCRE2_CODE_UNIT_WIDTH 8
         #if defined (HAVE_PCRE2_H)
         #  include <pcre2.h>
@@ -2653,9 +2652,9 @@ AC_DEFUN([OCTAVE_CHECK_SUNDIALS_SUNLINSOL_KLU], [
   AC_CHECK_HEADERS([sunlinsol/sunlinsol_klu.h], [], [],
     [#if defined (HAVE_KLU_H)
      #  include <klu.h>
-     #elif  defined (HAVE_KLU_KLU_H)
+     #elif defined (HAVE_KLU_KLU_H)
      #  include <klu/klu.h>
-     #elif  defined (HAVE_SUITESPARSE_KLU_H)
+     #elif defined (HAVE_SUITESPARSE_KLU_H)
      #  include <suitesparse/klu.h>
      #endif
     ])

@@ -402,7 +402,7 @@ ANY_INCLUDING_NL (.|{NL})
 %%
 
 %{
-// Make script and function files start with an invalid token. This makes
+// Make script and function files start with an invalid token.  This makes
 // the parser go down a special path.
 %}
 
@@ -2104,8 +2104,8 @@ static std::size_t V__token_count__ = 0;
 
 DEFUN (iskeyword, args, ,
        doc: /* -*- texinfo -*-
-@deftypefn  {} {} iskeyword ()
-@deftypefnx {} {} iskeyword (@var{name})
+@deftypefn  {} {@var{tf} =} iskeyword (@var{name})
+@deftypefnx {} {@var{keyword_list} =} iskeyword ()
 Return true if @var{name} is an Octave keyword.
 
 If @var{name} is omitted, return a list of keywords.
@@ -2160,7 +2160,7 @@ If @var{name} is omitted, return a list of keywords.
 %!assert (iskeyword ("get"), false)
 %!assert (iskeyword ("set"), false)
 
-%!error iskeyword ("A", "B")
+%!error <Invalid call> iskeyword ("A", "B")
 %!error <NAME must be a string> iskeyword (1)
 
 */
@@ -3249,7 +3249,7 @@ base_lexer::handle_number<10> ()
 #elif defined (OCTAVE_HAVE_FAST_FLOAT)
   auto [ptr, ec] = fast_float::from_chars (chars_start, chars_end, value);
 #else
-#  error "Cannot convert string to floating-point number. This should be unreachable."
+#  error "Cannot convert string to floating-point number.  This should be unreachable."
 #endif
 
   if (ec != std::errc{})

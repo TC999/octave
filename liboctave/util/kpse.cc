@@ -32,13 +32,9 @@
 #  include "config.h"
 #endif
 
-#include <cctype>
 #include <cerrno>
 #include <cstdlib>
 
-#include <map>
-#include <fstream>
-#include <iostream>
 #include <string>
 
 #include "dir-ops.h"
@@ -704,7 +700,7 @@ kpse_all_path_find_first_of (const std::string& path,
 }
 
 /* Perform tilde expansion on each element of the path, and include
-   canonical directory names for only the the actually existing
+   canonical directory names for only the actually existing
    directories in the result.  */
 
 std::string

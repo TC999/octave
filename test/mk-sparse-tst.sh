@@ -92,7 +92,7 @@
 #    helper print_mapper_test
 #        sub-helper function of gen_mapper_tests to print individual tests
 #    helper gen_mapper_tests
-#        Tests all of the one argument mapper functions. There are a few
+#        Tests all of the one argument mapper functions.  There are a few
 #        specific tests that abs, real and imag return real values.
 #    helper gen_unaryop_tests
 #        functions and operators which transform a single matrix
@@ -177,6 +177,7 @@ cat <<EOF
 %% error handling in constructor
 %!error <Invalid call> sparse ()
 %!error <Invalid call> sparse (1,2,3,4,5,6,7)
+%!error <A must be a 2-D matrix> sparse (ones (2,2,2))
 %!warning <input array cast to double>
 %! warning ("on", "Octave:sparse:double-conversion", "local");
 %! s = sparse (single ([1 2]));
@@ -950,7 +951,6 @@ gen_select_tests() {
 %!assert (as(idx'), sparse (af(idx')))
 %!assert (as(flipud (idx(:))), sparse (af(flipud (idx(:)))))
 %!assert (as([idx,idx]), sparse (af([idx,idx])))
-%!assert (as(reshape ([idx;idx], [1,length(idx),2])), sparse(af(reshape ([idx;idx], [1,length(idx),2]))))
 
 %% Slice tests
 %!assert (as(ridx,cidx), sparse (af(ridx,cidx)))
@@ -992,6 +992,12 @@ gen_select_tests() {
 %!test
 %! ts = as; ts(:,1) = []; tf = af; tf(:,1) = [];
 %! assert (ts, sparse (tf));
+%!test
+%! xs = sparse (magic (3));
+%! ndidx(:,:,1) = [4, 9]; 
+%! ndidx(:,:,2) = [4, 9]; 
+%! xs(ndidx) = [];
+%! assert (xs, sparse ([8 3 4 5 9 6 7]));
 
 %% Test "end" keyword
 %!assert (full (as(end)), af(end))
@@ -1048,7 +1054,7 @@ EOF
 
 # =============================================================
 # Specific solver tests for matrices that will test all of the solver
-# code. Uses alpha and beta
+# code.  Uses alpha and beta
 gen_solver_tests() {
 
 if $preset; then

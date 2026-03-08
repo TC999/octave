@@ -27,14 +27,11 @@
 #  include "config.h"
 #endif
 
-#include <cctype>
-
 #include <condition_variable>
 #include <iostream>
 #include <list>
 #include <mutex>
 #include <string>
-#include <thread>
 
 #include "cmd-edit.h"
 #include "file-ops.h"
@@ -1282,7 +1279,7 @@ tree_evaluator::visit_argument_list (tree_argument_list&)
 void
 tree_evaluator::visit_arguments_block (tree_arguments_block&)
 {
-  warning ("function arguments validation blocks are not supported; INCORRECT RESULTS ARE POSSIBLE");
+  warning ("function arguments validation blocks are not yet implemented; INCORRECT RESULTS ARE POSSIBLE");
 }
 
 void
@@ -1772,7 +1769,7 @@ tree_evaluator::make_fcn_handle (const std::string& name)
                   // the calling stack frame as the context instead of
                   // the current stack frame.
 
-                  // FIXME:  Do we need both checks here or is it
+                  // FIXME: Do we need both checks here or is it
                   // sufficient to check that the parent of curr_fcn
                   // is the same as the parent of fcn?  Is there any
                   // case where curr_fcn could be nullptr, or does
@@ -2293,14 +2290,20 @@ tree_evaluator::undefine_parameter_list (tree_parameter_list *param_list)
 DEFMETHOD (end, interp, args, ,
            doc: /* -*- texinfo -*-
 @deftypefn {} {} end
-Last element of an array or the end of any @code{for}, @code{parfor},
-@code{if}, @code{do}, @code{while}, @code{function}, @code{switch},
-@code{try}, or @code{unwind_protect} block.
+The termination of a code block @emph{or} the last element of an array.
 
-As an index of an array, the magic index @qcode{"end"} refers to the
-last valid entry in an indexing operation.
+The keyword @code{end} is used to terminate blocks of code begun with
+@code{for}, @code{parfor}, @code{if}, @code{do}, @code{while}, @code{function},
+@code{switch}, @code{try}, or @code{unwind_protect}.
 
-Example:
+When using classdef (object-oriented) programming, the keyword terminates blocks
+of code begun with @code{classdef}, @code{properties}, @code{methods},
+@code{events}, or @code{enumeration}.
+
+As an index of an array, the magic index @qcode{"end"} refers to the last valid
+entry in an indexing operation.
+
+Examples:
 
 @example
 @group
@@ -2314,15 +2317,15 @@ Example:
 @end group
 @end example
 
-Programming notes:
+Programming Notes:
 @enumerate
 @item
-The @code{end} keyword cannot be used within @code{subsref},
-@code{subsasgn}, or @code{substruct} for manual indexing operations.
+The @code{end} keyword cannot be used within @code{subsref}, @code{subsasgn}, or
+@code{substruct} for manual indexing operations.
 
 @item
-For custom classes, to enable use of @code{end} in indexing expressions it
-must be overloaded with a function definition such as:
+For custom classes, enabling use of @code{end} in indexing expressions requires
+writing an overloaded function such as:
 
 @example
 @group
@@ -4132,7 +4135,7 @@ tree_evaluator::visit_statement (tree_statement& stmt)
 
               // It doesn't make sense to continue execution after an
               // error occurs so force the debugger to quit all debug
-              // levels and return the the top prompt.
+              // levels and return the top prompt.
 
               throw quit_debug_exception (true);
             }

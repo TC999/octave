@@ -869,7 +869,7 @@ AM_CONDITIONAL([AMCOND_BUILD_EXTERNAL_LIBXERBLA],
   [test -n "$BUILD_EXTERNAL_LIBXERBLA"])
 
 ### Set options for dynamic linking if enabled.
-dnl Options set only only if we are building shared libs and some API for
+dnl Options set only if we are building shared libs and some API for
 dnl dynamic linking has been detected.
 
 dnl FIXME: A lot of the following duplicates the functionality of
@@ -1127,6 +1127,7 @@ dnl search paths have been established, and at the same priority level as
 dnl system library function and header checks, but before checks for all
 dnl external library dependencies.
 
+gl_SET_CRYPTO_CHECK_DEFAULT([auto-gpl-compat])
 gl_INIT
 
 ### Checks for header files.
@@ -1139,24 +1140,6 @@ dnl Use multiple AC_CHECKs to avoid line continuations '\' in list.
 AC_CHECK_HEADERS([dlfcn.h floatingpoint.h fpu_control.h grp.h])
 AC_CHECK_HEADERS([ieeefp.h pthread.h pwd.h sys/ioctl.h])
 AC_CHECK_HEADERS([stropts.h sys/stropts.h])
-
-## Some versions of GCC fail when using -fopenmp and including
-## stdatomic.h, so we try to work around that.  Use the compile_ifelse
-## macro because we are trying to test the case of the header file
-## existing but not being usable.  The default warning from the
-## check_headers macro is not appropriate here.
-AC_CACHE_CHECK([whether stdatomic.h can be compiled],
-  [octave_cv_stdatomic_h_ok],
-  [AC_COMPILE_IFELSE([AC_LANG_SOURCE([[
-    #include <stdatomic.h>
-    ]])],
-    octave_cv_stdatomic_h_ok=yes,
-    octave_cv_stdatomic_h_ok=no)
-  ])
-if test $octave_cv_stdatomic_h_ok = yes; then
-  AC_DEFINE(OCTAVE_STDATOMIC_H_OK, 1,
-    [Define to 1 if stdatomic.h can be compiled.])
-fi
 
 ## Find a termio header to include.
 
@@ -1217,7 +1200,7 @@ AC_CACHE_CHECK([whether ${CXX-g++} allows overload of char, int8_t, and uint8_t]
   [octave_cv_overload_char_int8_t],
   [AC_LANG_PUSH(C++)
   AC_COMPILE_IFELSE([AC_LANG_SOURCE([[
-    #include <stdint.h>
+    #include <cstdint>
     void somefunc(char x) {};
     void somefunc(int8_t x) {};
     void somefunc(uint8_t x) {};

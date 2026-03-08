@@ -12,6 +12,10 @@ Summary of important user-visible changes for version 12 (yyyy-mm-dd):
 
 ### Matlab compatibility
 
+* Sparse matrices can only be 2-dimensional.  Octave now throws an error if the
+  input to `sparse` is an N-dimensional array.  An error is also thrown if an
+  N-dimensional indexing operation of a sparse matrix is attempted.  Both
+  behaviors are Matlab-compatible.
 
 ### Alphabetical list of new functions added in Octave 12
 
@@ -75,6 +79,26 @@ from Octave 12.
     * `f_f_Mapper`
     * `f_fc_Mapper`
     * `fc_fc_Mapper`
+
+
+### Functions removed without the usual deprecation period
+
+The following changes have been made without the usual deprecation period of two
+release cycles because we believe that they are unlikely to have been used in
+code outside of core Octave.
+
+The header `oct-atomic.h` has been removed.  Use the `std::atomic` object
+defined in the standard C++ header `<atomic>` instead.
+
+The following C++ functions have been removed from Octave 12:
+
+        Function                | Replacement
+        ------------------------|-------------------------------------------
+        octave_get_float_format | octave::mach_info::native_float_format
+        octave_is_big_endian    | octave::mach_info::words_big_endian
+                                | (or octave::mach_info::words_little_endian)
+        octave_atomic_increment | ++std::atomic<...>
+        octave_atomic_decrement | --std::atomic<...>
 
 ### Old release news
 

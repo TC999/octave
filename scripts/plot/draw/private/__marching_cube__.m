@@ -28,7 +28,7 @@
 ## @deftypefnx {} {[@var{t}, @var{p}, @var{c}] =} __marching_cube__ (@var{xx}, @var{yy}, @var{zz}, @var{v}, @var{iso}, @var{colors})
 ##
 ## Return the triangulation information @var{t} at points @var{p} for the
-## isosurface values resp. the volume data @var{v} and the iso level
+## isosurface values resp.@: the volume data @var{v} and the iso level
 ## @var{iso}.  It is considered that the volume data @var{v} is given at
 ## the points @var{xx}, @var{yy}, and @var{zz} which are of type
 ## three-dimensional numeric arrays.  The orientation of the triangles is
@@ -157,7 +157,8 @@ function [T, p, col] = __marching_cube__ (xx, yy, zz, v, iso, colors)
   ccedge = [vec(cedge(id)), id];
   ix_offset=0;
   for jj = 1:12
-    id__ = bitget (ccedge(:, 1), jj);
+    ## Make sure "id__" is logical egardless of "bitget" return type.
+    id__ = logical (bitget (ccedge(:, 1), jj));
     id_ = ccedge(id__, 2);
     [ix iy iz] = ind2sub (size (cc), id_);
     id_c = sub2ind (size (v), ix, iy, iz);

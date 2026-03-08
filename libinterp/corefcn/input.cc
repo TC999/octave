@@ -34,9 +34,7 @@
 #include <cstring>
 
 #include <algorithm>
-#include <iostream>
 #include <queue>
-#include <sstream>
 #include <string>
 
 #include "cmd-edit.h"
@@ -589,7 +587,7 @@ void
 input_system::set_dir_encoding (const std::string& dir,
                                 std::string& enc)
 {
-  // use lower case
+  // use lowercase
   std::transform (enc.begin (), enc.end (), enc.begin (), ::tolower);
 
   if (enc.compare ("delete") == 0)

@@ -1456,7 +1456,9 @@ Sparse<T, Alloc>::index (const octave::idx_vector& idx, bool resize_ok) const
 
   octave_idx_type nel = numel (); // Can throw.
 
-  const dim_vector idx_dims = idx.orig_dimensions ().redim (2);
+  const dim_vector idx_dims = idx.orig_dimensions ();
+  if (idx_dims.ndims () != 2)
+    (*current_liboctave_error_handler) ("only 2-D indexing is allowed for sparse arrays");
 
   if (idx.is_colon ())
     {
@@ -2520,7 +2522,7 @@ Sparse<T, Alloc>::diag (octave_idx_type k) const
 
       if (nnr > 0 && nnc > 0)
         {
-          octave_idx_type ndiag = std::min (nnr,  nnc);
+          octave_idx_type ndiag = std::min (nnr, nnc);
 
           // Count the number of nonzero elements
           octave_idx_type nel = 0;

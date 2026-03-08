@@ -29,9 +29,7 @@
 
 #include <cmath>
 
-#include <istream>
 #include <limits>
-#include <ostream>
 
 #include "Array-util.h"
 #include "Range.h"
@@ -270,7 +268,7 @@ xinit (const octave_int<T>& base, const octave_int<T>& limit,
   // of rounding.  So, use underlying C++ types instead of
   // octave_int<T>.
 
-  // FIXME: The numerator might underflow or overflow. Add checks for
+  // FIXME: The numerator might underflow or overflow.  Add checks for
   // that.
   if (reverse)
     {

@@ -32,13 +32,12 @@
 
 #include <ostream>
 #include <sstream>
-#include <new>
 
 #include "quit.h"
 
-std::atomic<int> octave_interrupt_state{0};
+std::atomic<int> octave_interrupt_state {0};
 
-std::atomic<bool> octave_signal_caught{false};
+std::atomic<bool> octave_signal_caught {false};
 
 void (*octave_signal_hook) () = nullptr;
 void (*octave_interrupt_hook) () = nullptr;
