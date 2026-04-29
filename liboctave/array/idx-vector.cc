@@ -27,6 +27,7 @@
 #  include "config.h"
 #endif
 
+#include <limits>
 #include <ostream>
 
 #include "Array-oct.h"
@@ -38,6 +39,14 @@
 #include "mappers.h"
 #include "oct-error.h"
 #include "oct-locbuf.h"
+
+static constexpr octave_idx_type IDX_MAX = dim_vector::dim_max ();
+
+// Maximum IDX that can be resolved is set by maximum integer value when
+// octave_idx_type is int32_t, or by flintmax (2^53) when it is int64_t.
+static constexpr double IDX_MAX_DBL
+  = std::min (double (IDX_MAX),
+              double (static_cast<int64_t> (1) << std::numeric_limits<double>::digits));
 
 OCTAVE_BEGIN_NAMESPACE(octave)
 
@@ -226,10 +235,14 @@ convert_index (octave_idx_type i, octave_idx_type& ext)
 inline octave_idx_type
 convert_index (double x, octave_idx_type& ext)
 {
-  octave_idx_type i = static_cast<octave_idx_type> (x);
+  // NOTE: Benchmark before making any changes to this expression.
+  if (! std::isfinite (x)
+      || x <= 0
+      || x > IDX_MAX_DBL
+      || x != std::trunc (x))
+    err_invalid_index (x - 1.0);
 
-  if (static_cast<double> (i) != x)
-    err_invalid_index (x-1);
+  octave_idx_type i = static_cast<octave_idx_type> (x);
 
   return convert_index (i, ext);
 }
@@ -244,6 +257,17 @@ template <typename T>
 inline octave_idx_type
 convert_index (octave_int<T> x, octave_idx_type& ext)
 {
+  octave_idx_type i = octave_int<octave_idx_type> (x).value ();
+
+  return convert_index (i, ext);
+}
+
+inline octave_idx_type
+convert_index (octave_int<uint64_t> x, octave_idx_type& ext)
+{
+  if (x.value () > static_cast<uint64_t> (IDX_MAX))
+    err_invalid_index (x.value () - 1);
+
   octave_idx_type i = octave_int<octave_idx_type> (x).value ();
 
   return convert_index (i, ext);

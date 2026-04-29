@@ -1,19 +1,3 @@
-## Options functions for Fortran packages like LSODE, DASPK.
-## These are generated automagically by configure and Perl.
-OPT_HANDLERS = \
-  %reldir%/DASPK-opts.cc \
-  %reldir%/DASRT-opts.cc \
-  %reldir%/DASSL-opts.cc \
-  %reldir%/LSODE-opts.cc \
-  %reldir%/Quad-opts.cc
-
-$(OPT_HANDLERS): %reldir%/%.cc : liboctave/numeric/%.in | %reldir%/$(octave_dirstamp)
-	$(AM_V_GEN)rm -f $@-t $@ && \
-	$(PERL) $(srcdir)/build-aux/mk-opts.pl --opt-handler-fcns $< > $@-t && \
-	mv $@-t $@
-
-$(OPT_HANDLERS): $(srcdir)/build-aux/mk-opts.pl
-
 DIRSTAMP_FILES += %reldir%/$(octave_dirstamp)
 
 COREFCN_INC = \
@@ -23,6 +7,8 @@ COREFCN_INC = \
   %reldir%/c-file-ptr-stream.h \
   %reldir%/call-stack.h \
   %reldir%/cdisplay.h \
+  %reldir%/cmd-edit.h \
+  %reldir%/cmd-hist.h \
   %reldir%/data.h \
   %reldir%/defaults.h \
   %reldir%/defun-dld.h \
@@ -72,6 +58,8 @@ COREFCN_INC = \
   %reldir%/oct-prcstrm.h \
   %reldir%/oct-procbuf.h \
   %reldir%/oct-process.h \
+  %reldir%/oct-rl-edit.h \
+  %reldir%/oct-rl-hist.h \
   %reldir%/oct-stdstrm.h \
   %reldir%/oct-stream.h \
   %reldir%/oct-strstrm.h \
@@ -108,100 +96,53 @@ NOINSTALL_COREFCN_INC = \
   %reldir%/oct-hdf5.h \
   %reldir%/oct-opengl.h
 
+COREFCN_C_SRC = \
+  %reldir%/oct-rl-edit.c \
+  %reldir%/oct-rl-hist.c
+
 ## oct-tex-parser.h is in the SRC list so that it will be distributed
 ## but not installed.
 
 COREFCN_SRC = \
   %reldir%/Cell.cc \
-  %reldir%/__betainc__.cc \
-  %reldir%/__contourc__.cc \
-  %reldir%/__dsearchn__.cc \
-  %reldir%/__eigs__.cc \
-  %reldir%/__expint__.cc \
-  %reldir%/__ftp__.cc \
-  %reldir%/__gammainc__.cc \
-  %reldir%/__ichol__.cc \
-  %reldir%/__ilu__.cc \
-  %reldir%/__isprimelarge__.cc \
-  %reldir%/__lin_interpn__.cc \
   %reldir%/__magick_read__.cc \
-  %reldir%/__pchip_deriv__.cc \
-  %reldir%/__qp__.cc \
-  %reldir%/amd.cc \
   %reldir%/auto-shlib.cc \
-  %reldir%/balance.cc \
   %reldir%/base-text-renderer.cc \
-  %reldir%/besselj.cc \
-  %reldir%/bitfcns.cc \
-  %reldir%/bsxfun.cc \
   %reldir%/c-file-ptr-stream.cc \
   %reldir%/call-stack.cc \
-  %reldir%/ccolamd.cc \
   %reldir%/cdisplay.c \
-  %reldir%/cellfun.cc \
-  %reldir%/chol.cc \
+  %reldir%/cmd-edit.cc \
+  %reldir%/cmd-hist.cc \
   %reldir%/coct-hdf5-types.c \
-  %reldir%/colamd.cc \
-  %reldir%/colloc.cc \
-  %reldir%/conv2.cc \
-  %reldir%/daspk.cc \
-  %reldir%/dasrt.cc \
-  %reldir%/dassl.cc \
   %reldir%/data.cc \
   %reldir%/debug.cc \
   %reldir%/defaults.cc \
   %reldir%/defun.cc \
-  %reldir%/det.cc \
-  %reldir%/dirfns.cc \
   %reldir%/display.cc \
-  %reldir%/dlmread.cc \
-  %reldir%/dmperm.cc \
-  %reldir%/dot.cc \
   %reldir%/dynamic-ld.cc \
-  %reldir%/eig.cc \
-  %reldir%/ellipj.cc \
   %reldir%/environment.cc \
   %reldir%/error.cc \
   %reldir%/errwarn.cc \
   %reldir%/event-manager.cc \
   %reldir%/event-queue.cc \
   %reldir%/fcn-info.cc \
-  %reldir%/fft.cc \
-  %reldir%/fft2.cc \
-  %reldir%/fftn.cc \
   %reldir%/file-io.cc \
-  %reldir%/filter.cc \
-  %reldir%/find.cc \
   %reldir%/ft-text-renderer.cc \
-  %reldir%/gcd.cc \
-  %reldir%/getgrent.cc \
-  %reldir%/getpwent.cc \
-  %reldir%/getrusage.cc \
   %reldir%/gh-manager.cc \
-  %reldir%/givens.cc \
   %reldir%/gl-render.cc \
   %reldir%/gl2ps-print.cc \
   %reldir%/graphics-toolkit.cc \
   %reldir%/graphics-utils.cc \
   %reldir%/graphics.cc \
-  %reldir%/gsvd.cc \
   %reldir%/gtk-manager.cc \
-  %reldir%/hash.cc \
   %reldir%/help.cc \
-  %reldir%/hess.cc \
-  %reldir%/hex2num.cc \
   %reldir%/hook-fcn.cc \
   %reldir%/input.cc \
   %reldir%/interpreter-private.cc \
   %reldir%/interpreter.cc \
-  %reldir%/inv.cc \
-  %reldir%/jsondecode.cc \
-  %reldir%/jsonencode.cc \
-  %reldir%/kron.cc \
   %reldir%/latex-text-renderer.cc \
   %reldir%/load-path.cc \
   %reldir%/load-save.cc \
-  %reldir%/lookup.cc \
   %reldir%/ls-ascii-helper.cc \
   %reldir%/ls-hdf5.cc \
   %reldir%/ls-mat-ascii.cc \
@@ -211,14 +152,7 @@ COREFCN_SRC = \
   %reldir%/ls-oct-binary.cc \
   %reldir%/ls-oct-text.cc \
   %reldir%/ls-utils.cc \
-  %reldir%/lsode.cc \
-  %reldir%/lu.cc \
-  %reldir%/mappers.cc \
-  %reldir%/matrix_type.cc \
-  %reldir%/max.cc \
-  %reldir%/mgorth.cc \
   %reldir%/mxarray.cc \
-  %reldir%/nproc.cc \
   %reldir%/oct-fstrm.cc \
   %reldir%/oct-hdf5-types.cc \
   %reldir%/oct-hist.cc \
@@ -232,62 +166,31 @@ COREFCN_SRC = \
   %reldir%/oct-tex-lexer.ll \
   %reldir%/oct-tex-parser.h \
   %reldir%/oct-tex-parser.yy \
-  %reldir%/ordqz.cc \
-  %reldir%/ordschur.cc \
   %reldir%/pager.cc \
   %reldir%/panic.cc \
-  %reldir%/perms.cc \
-  %reldir%/pinv.cc \
-  %reldir%/pow2.cc \
   %reldir%/pr-flt-fmt.cc \
   %reldir%/pr-output.cc \
   %reldir%/procstream.cc \
-  %reldir%/psi.cc \
-  %reldir%/qr.cc \
-  %reldir%/quad.cc \
-  %reldir%/quadcc.cc \
-  %reldir%/qz.cc \
-  %reldir%/rand.cc \
-  %reldir%/rcond.cc \
-  %reldir%/regexp.cc \
-  %reldir%/schur.cc \
   %reldir%/sighandlers.cc \
   %reldir%/sparse-xdiv.cc \
   %reldir%/sparse-xpow.cc \
-  %reldir%/sparse.cc \
-  %reldir%/spparms.cc \
-  %reldir%/sqrtm.cc \
   %reldir%/stack-frame.cc \
-  %reldir%/stream-euler.cc \
-  %reldir%/strfind.cc \
-  %reldir%/strfns.cc \
-  %reldir%/sub2ind.cc \
-  %reldir%/svd.cc \
-  %reldir%/sylvester.cc \
-  %reldir%/symbfact.cc \
   %reldir%/syminfo.cc \
-  %reldir%/symrcm.cc \
   %reldir%/symrec.cc \
   %reldir%/symscope.cc \
   %reldir%/symtab.cc \
-  %reldir%/syscalls.cc \
   %reldir%/sysdep.cc \
   %reldir%/text-engine.cc \
   %reldir%/text-renderer.cc \
-  %reldir%/time.cc \
   %reldir%/toplev.cc \
-  %reldir%/trexc.cc \
-  %reldir%/tril.cc \
-  %reldir%/tsearch.cc \
-  %reldir%/typecast.cc \
   %reldir%/url-handle-manager.cc \
-  %reldir%/urlwrite.cc \
   %reldir%/utils.cc \
   %reldir%/variables.cc \
   %reldir%/xdiv.cc \
   %reldir%/xnorm.cc \
   %reldir%/xpow.cc \
   %reldir%/gzfstream.cc \
+	$(COREFCN_C_SRC) \
   $(NOINSTALL_COREFCN_INC)
 
 ## Special rules for sources which must be built before rest of compilation.
@@ -303,17 +206,6 @@ COREFCN_SRC = \
 %reldir%/graphics-props.cc: %reldir%/graphics.in.h %reldir%/genprops.awk | %reldir%/$(octave_dirstamp)
 	$(AM_V_GEN)rm -f $@-t && \
 	$(AWK) -v emit_graphics_props=1 -f $(srcdir)/%reldir%/genprops.awk $< > $@-t && \
-	mv $@-t $@
-
-%reldir%/oct-errno.cc: %reldir%/oct-errno.in.cc %reldir%/mk-errno-list.sh | %reldir%/$(octave_dirstamp)
-	$(AM_V_GEN)rm -f $@-t && \
-	if test -n "$(PERL)"; then \
-	  $(SHELL) $(srcdir)/%reldir%/mk-errno-list.sh --perl "$(PERL)" < $< > $@-t; \
-	elif test -n "$(PYTHON)"; then \
-	  $(SHELL) $(srcdir)/%reldir%/mk-errno-list.sh --python "$(PYTHON)" < $< > $@-t; \
-	else \
-	  $(SHELL) $(srcdir)/%reldir%/mk-errno-list.sh --sed "$(SED)" < $< > $@-t; \
-	fi && \
 	mv $@-t $@
 
 %reldir%/mxtypes.h: %reldir%/mxtypes.in.h %reldir%/mk-mxtypes-h.sh | %reldir%/$(octave_dirstamp)
@@ -334,16 +226,18 @@ COREFCN_SRC = \
 noinst_LTLIBRARIES += \
   %reldir%/libcorefcn.la
 
+include %reldir%/numeric/module.mk
+include %reldir%/system/module.mk
+include %reldir%/util/module.mk
+
 %canon_reldir%_libcorefcn_la_SOURCES = $(COREFCN_SRC)
 
 %canon_reldir%_libcorefcn_la_CPPFLAGS = \
   $(libinterp_liboctinterp_la_CPPFLAGS) \
   -DOCTAVE_MEX_SOVERSION="$(OCTAVE_LIBOCTMEX_SOVERSION_MAJOR)" \
-  $(FFTW_XCPPFLAGS) \
   $(FONTCONFIG_CPPFLAGS) \
   $(FT2_CPPFLAGS) \
   $(HDF5_CPPFLAGS) \
-  $(SPARSE_XCPPFLAGS) \
   $(WAYLAND_CLIENT_CPPFLAGS) \
   $(Z_CPPFLAGS) \
   $(OCTAVE_TEX_PARSER_CPPFLAGS)
@@ -352,12 +246,12 @@ libinterp_EXTRA_DIST += \
   %reldir%/default-defs.in.h \
   %reldir%/genprops.awk \
   %reldir%/graphics.in.h \
-  %reldir%/mk-errno-list.sh \
   %reldir%/mk-mxtypes-h.in.sh \
   %reldir%/mxtypes.in.h \
-  %reldir%/oct-errno.in.cc \
   %reldir%/oct-tex-lexer.in.ll \
   %reldir%/oct-tex-symbols.in
 
 GEN_CONFIG_SHELL += \
   %reldir%/mk-mxtypes-h.sh
+
+libinterp_liboctinterp_la_LIBADD += %reldir%/libcorefcn.la

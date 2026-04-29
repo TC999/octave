@@ -39,6 +39,7 @@
 #include "oct-lvalue.h"
 #include "oct-hdf5.h"
 #include "ov-struct.h"
+#include "quit.h"
 #include "unwind-prot.h"
 #include "utils.h"
 #include "variables.h"
@@ -583,20 +584,7 @@ octave_struct::do_index_op (const octave_value_list& idx, bool resize_ok)
 std::size_t
 octave_struct::byte_size () const
 {
-  // Neglect the size of the fieldnames.
-
-  std::size_t retval = 0;
-
-  for (auto p = m_map.cbegin (); p != m_map.cend (); p++)
-    {
-      std::string key = m_map.key (p);
-
-      octave_value val = octave_value (m_map.contents (p));
-
-      retval += val.byte_size ();
-    }
-
-  return retval;
+  return m_map.byte_size ();
 }
 
 void
@@ -736,8 +724,7 @@ octave_struct::save_ascii (std::ostream& os)
 
   os << "# length: " << nf << "\n";
 
-  // Iterating over the list of keys will preserve the order of the
-  // fields.
+  // Iterating over the list of keys will preserve the order of the fields.
   string_vector keys = m.fieldnames ();
 
   for (octave_idx_type i = 0; i < nf; i++)
@@ -750,6 +737,8 @@ octave_struct::save_ascii (std::ostream& os)
 
       if (! b)
         return ! os.fail ();
+
+      octave_quit ();
     }
 
   return true;
@@ -799,16 +788,18 @@ octave_struct::load_ascii (std::istream& is)
           octave_value t2;
           bool dummy;
 
-          // recurse to read cell elements
+          // Recurse to read each element of struct array.
           std::string nm = read_text_data (is, "", dummy, t2, j, false);
 
           if (! is)
             break;
 
-          Cell tcell = (t2.iscell () ? t2.xcell_value ("load: internal error loading struct elements") :
-                        Cell (t2));
+          Cell tcell = (t2.iscell () ? t2.xcell_value ("load: internal error loading struct elements")
+                                     : Cell (t2));
 
           m.setfield (nm, tcell);
+
+          octave_quit ();
         }
 
       if (! is)
@@ -847,8 +838,7 @@ octave_struct::save_binary (std::ostream& os, bool save_as_floats)
   int32_t len = nf;
   os.write (reinterpret_cast<char *> (&len), 4);
 
-  // Iterating over the list of keys will preserve the order of the
-  // fields.
+  // Iterating over the list of keys will preserve the order of the fields.
   string_vector keys = m.fieldnames ();
 
   for (octave_idx_type i = 0; i < nf; i++)
@@ -912,15 +902,14 @@ octave_struct::load_binary (std::istream& is, bool swap,
           bool dummy;
           std::string doc;
 
-          // recurse to read cell elements
-          std::string nm = read_binary_data (is, swap, fmt, "",
-                                             dummy, t2, doc);
+          // Recurse to read each element of struct array.
+          std::string nm = read_binary_data (is, swap, fmt, "", dummy, t2, doc);
 
           if (! is)
             break;
 
-          Cell tcell = (t2.iscell () ? t2.xcell_value ("load: internal error loading struct elements") :
-                        Cell (t2));
+          Cell tcell = (t2.iscell () ? t2.xcell_value ("load: internal error loading struct elements")
+                                     : Cell (t2));
 
           m.setfield (nm, tcell);
         }
@@ -959,8 +948,7 @@ octave_struct::save_hdf5 (octave_hdf5_id loc_id, const char *name,
 
   octave_idx_type nf = m.nfields ();
 
-  // Iterating over the list of keys will preserve the order of the
-  // fields.
+  // Iterating over the list of keys will preserve the order of the fields.
   string_vector keys = m.fieldnames ();
 
   for (octave_idx_type i = 0; i < nf; i++)
@@ -1021,8 +1009,8 @@ octave_struct::load_hdf5 (octave_hdf5_id loc_id, const char *name)
     {
       octave_value t2 = dsub.tc;
 
-      Cell tcell = (t2.iscell () ? t2.xcell_value ("load: internal error loading struct elements") :
-                    Cell (t2));
+      Cell tcell = (t2.iscell () ? t2.xcell_value ("load: internal error loading struct elements")
+                                 : Cell (t2));
 
       m.setfield (dsub.name, tcell);
 
@@ -1450,8 +1438,7 @@ octave_scalar_struct::save_ascii (std::ostream& os)
 
   os << "# length: " << nf << "\n";
 
-  // Iterating over the list of keys will preserve the order of the
-  // fields.
+  // Iterating over the list of keys will preserve the order of the fields.
   string_vector keys = m.fieldnames ();
 
   for (octave_idx_type i = 0; i < nf; i++)
@@ -1464,6 +1451,8 @@ octave_scalar_struct::save_ascii (std::ostream& os)
 
       if (! b)
         return ! os.fail ();
+
+      octave_quit ();
     }
 
   return true;
@@ -1486,14 +1475,15 @@ octave_scalar_struct::load_ascii (std::istream& is)
           octave_value t2;
           bool dummy;
 
-          // recurse to read cell elements
-          std::string nm
-            = read_text_data (is, "", dummy, t2, j, false);
+          // Recurse to read each struct field.
+          std::string nm = read_text_data (is, "", dummy, t2, j, false);
 
           if (! is)
             break;
 
           m.setfield (nm, t2);
+
+          octave_quit ();
         }
 
       if (! is)
@@ -1519,8 +1509,7 @@ octave_scalar_struct::save_binary (std::ostream& os, bool save_as_floats)
   int32_t len = nf;
   os.write (reinterpret_cast<char *> (&len), 4);
 
-  // Iterating over the list of keys will preserve the order of the
-  // fields.
+  // Iterating over the list of keys will preserve the order of the fields.
   string_vector keys = m.fieldnames ();
 
   for (octave_idx_type i = 0; i < nf; i++)
@@ -1559,9 +1548,8 @@ octave_scalar_struct::load_binary (std::istream& is, bool swap,
           bool dummy;
           std::string doc;
 
-          // recurse to read cell elements
-          std::string nm = read_binary_data (is, swap, fmt, "",
-                                             dummy, t2, doc);
+          // Recurse to read each struct field.
+          std::string nm = read_binary_data (is, swap, fmt, "", dummy, t2, doc);
 
           if (! is)
             break;
@@ -1603,8 +1591,7 @@ octave_scalar_struct::save_hdf5 (octave_hdf5_id loc_id, const char *name,
 
   octave_idx_type nf = m.nfields ();
 
-  // Iterating over the list of keys will preserve the order of the
-  // fields.
+  // Iterating over the list of keys will preserve the order of the fields.
   string_vector keys = m.fieldnames ();
 
   for (octave_idx_type i = 0; i < nf; i++)

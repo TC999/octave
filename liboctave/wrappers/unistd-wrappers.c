@@ -113,6 +113,12 @@ octave_ctermid_wrapper (void)
 }
 
 int
+octave_dup_wrapper (int old_fd)
+{
+  return dup (old_fd);
+}
+
+int
 octave_dup2_wrapper (int fd1, int fd2)
 {
   return dup2 (fd1, fd2);
@@ -180,11 +186,7 @@ octave_execv_wrapper (const char *file, char *const *argv)
 int
 octave_execvp_wrapper (const char *file, char *const *argv)
 {
-#if defined (OCTAVE_USE_WINDOWS_API)
-  return execvp (file, (const char *const *) argv);
-#else
   return execvp (file, argv);
-#endif
 }
 
 pid_t

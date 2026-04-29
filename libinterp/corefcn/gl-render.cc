@@ -27,6 +27,7 @@
 #  include "config.h"
 #endif
 
+#include <array>
 #include <limits>
 #include <memory>
 #include <sstream>
@@ -1569,8 +1570,6 @@ opengl_renderer::draw_axes_x_grid (const axes::properties& props)
 {
 #if defined (HAVE_OPENGL)
 
-  gh_manager& gh_mgr = __get_gh_manager__ ();
-
   int xstate = props.get_xstate ();
 
   if (xstate != AXE_DEPTH_DIR
@@ -1747,11 +1746,7 @@ opengl_renderer::draw_axes_x_grid (const axes::properties& props)
                               math::signum (ypTick-ypTickN)*fy*xtickoffset,
                               zpTick, 0, halign, valign, wmax, hmax);
         }
-
-      gh_mgr.get_object (props.get_xlabel ()).set ("visible", "on");
     }
-  else
-    gh_mgr.get_object (props.get_xlabel ()).set ("visible", "off");
 
 #else
 
@@ -1769,8 +1764,6 @@ void
 opengl_renderer::draw_axes_y_grid (const axes::properties& props)
 {
 #if defined (HAVE_OPENGL)
-
-  gh_manager& gh_mgr = __get_gh_manager__ ();
 
   int ystate = props.get_ystate ();
 
@@ -1949,11 +1942,7 @@ opengl_renderer::draw_axes_y_grid (const axes::properties& props)
                               math::signum (xpTick-xpTickN)*fx*ytickoffset,
                               zpTick, 1, halign, valign, wmax, hmax);
         }
-
-      gh_mgr.get_object (props.get_ylabel ()).set ("visible", "on");
     }
-  else
-    gh_mgr.get_object (props.get_ylabel ()).set ("visible", "off");
 
 #else
 
@@ -1970,7 +1959,6 @@ opengl_renderer::draw_axes_y_grid (const axes::properties& props)
 void
 opengl_renderer::draw_axes_z_grid (const axes::properties& props)
 {
-  gh_manager& gh_mgr = __get_gh_manager__ ();
 
   int zstate = props.get_zstate ();
 
@@ -2150,11 +2138,7 @@ opengl_renderer::draw_axes_z_grid (const axes::properties& props)
                                   yPlaneN, 2, halign, valign, wmax, hmax);
             }
         }
-
-      gh_mgr.get_object (props.get_zlabel ()).set ("visible", "on");
     }
-  else
-    gh_mgr.get_object (props.get_zlabel ()).set ("visible", "off");
 }
 
 void
@@ -4409,19 +4393,19 @@ opengl_renderer::set_clipbox (double x1, double x2, double y1, double y2,
   y1 -= 0.001*dy; y2 += 0.001*dy;
   z1 -= 0.001*dz; z2 += 0.001*dz;
 
-  ColumnVector p (4, 0.0);
+  std::array<double, 4> p = {0.0, 0.0, 0.0, 0.0};
 
-  p(0) = -1; p(3) = x2;
+  p[0] = -1; p[3] = x2;
   m_glfcns.glClipPlane (GL_CLIP_PLANE0, p.data ());
-  p(0) = 1; p(3) = -x1;
+  p[0] = 1; p[3] = -x1;
   m_glfcns.glClipPlane (GL_CLIP_PLANE1, p.data ());
-  p(0) = 0; p(1) = -1; p(3) = y2;
+  p[0] = 0; p[1] = -1; p[3] = y2;
   m_glfcns.glClipPlane (GL_CLIP_PLANE2, p.data ());
-  p(1) = 1; p(3) = -y1;
+  p[1] = 1; p[3] = -y1;
   m_glfcns.glClipPlane (GL_CLIP_PLANE3, p.data ());
-  p(1) = 0; p(2) = -1; p(3) = z2;
+  p[1] = 0; p[2] = -1; p[3] = z2;
   m_glfcns.glClipPlane (GL_CLIP_PLANE4, p.data ());
-  p(2) = 1; p(3) = -z1;
+  p[2] = 1; p[3] = -z1;
   m_glfcns.glClipPlane (GL_CLIP_PLANE5, p.data ());
 
   m_xmin = x1; m_xmax = x2;

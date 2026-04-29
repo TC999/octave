@@ -336,6 +336,12 @@ Windows systems.
 %! assert (ischar (output));
 %! assert (! isempty (output));
 
+## Test asynchroneous execution of process
+%!test
+%! pid = system (sprintf ('"%s" "--version" 1>%s 2>&1', octave_exe_path, ...
+%!                        nul_device), false, "async");
+%! assert (pid > -1);
+
 %!error <Invalid call> system ()
 %!error <Invalid call> system (1, 2, 3, 4)
 %!error <first argument must be a string> system (1)

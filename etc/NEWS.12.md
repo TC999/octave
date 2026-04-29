@@ -3,9 +3,19 @@ Summary of important user-visible changes for version 12 (yyyy-mm-dd):
 
 ### General improvements
 
+* The size of `classdef` objects is now reported by `who` (bug #55810).  A
+  value class' byte size is calculated by summing up the byte size of all its
+  properties.  A handle class' byte size is calculated by getting the size of
+  the machine word on the users computer (most likely 4 or 8 bytes).
+
+* The constructors of `classdef` classes now support returning more than one
+  output argument.  The first output argument must be the constructed object.
+
 
 ### Graphical User Interface
 
+* When opening a file from the Find Files dialog, all occurrences of the search
+  text are highlighted in the editor.
 
 ### Graphics backend
 
@@ -17,8 +27,23 @@ Summary of important user-visible changes for version 12 (yyyy-mm-dd):
   N-dimensional indexing operation of a sparse matrix is attempted.  Both
   behaviors are Matlab-compatible.
 
+* The function `ismember` now supports the `"legacy"` option for determining
+  which index position to return when there are multiple matches.  The default
+  behavior is now to return the first instance.  The legacy option returns
+  the location of the last instance instead, and was the default behavior in
+  previous Octave versions and in Matlab release R2012b and earlier.
+
+* The optional second output of `linsolve` now returns the rank of the input
+  matrix if it is rectangular.  Octave no longer emits a warning when it
+  finds a singular matrix if the second output has been requested.
+
+* The functions `copyfile` and `movefile` will now create as many intermediate
+  folders as required when the second argument `f2` is a folder which does not
+  exist.  For example: `copyfile ('folderA', 'folderB/folderC/folderD')`.
+
 ### Alphabetical list of new functions added in Octave 12
 
+* `diagnostics_show_caret`
 
 ### Deprecated functions, properties, and operators
 
@@ -29,13 +54,15 @@ major release after 12):
 - Functions
 
         Function               | Replacement
-        -----------------------|------------------
+        -----------------------|--------------------------
 
 
 - Core
 
-        Function                  | Replacement
-        --------------------------|--------------------------
+        Function                            | Replacement
+        ------------------------------------|-------------------------------------------
+        string_vector::list_in_columns (os) | string_vector::list_in_columns (os, width)
+                                            |   width = command_editor::terminal_cols ()
 
 The following features were deprecated in Octave 10 and have been removed
 from Octave 12.
@@ -62,7 +89,6 @@ from Octave 12.
         __lo_ieee_isfinite, __lo_ieee_float_isfinite | std::isfinite  or  isfinite
         __lo_ieee_isinf,    __lo_ieee_float_isinf    | std::isinf     or  isinf
         __lo_ieee_signbit,  __lo_ieee_float_signbit  | std::signbit   or  signbit
-
 
 The following features were deprecated in Octave 11 and have been removed
 from Octave 12.
@@ -93,12 +119,47 @@ defined in the standard C++ header `<atomic>` instead.
 The following C++ functions have been removed from Octave 12:
 
         Function                | Replacement
-        ------------------------|-------------------------------------------
+        ------------------------|--------------------------------------------
         octave_get_float_format | octave::mach_info::native_float_format
         octave_is_big_endian    | octave::mach_info::words_big_endian
                                 | (or octave::mach_info::words_little_endian)
         octave_atomic_increment | ++std::atomic<...>
         octave_atomic_decrement | --std::atomic<...>
+
+### Function APIs changed without the usual deprecation period
+
+The `Sparse` class for sparse matrices behaves similarly to the `Array` class
+for full matrices.  The `Array` class provides a `data()` method which returns a
+read-only `const` pointer to the underlying data, and a `rwdata()` method which
+returns a pointer that can be used to modify the underlying data.  The `Sparse`
+class did not follow these conventions, but has been modified in Octave 12 to
+behave identically to the `Array` class.
+
+        Old Function                | New Functions
+        ----------------------------|--------------------------------------
+        Sparse::data (write-access) | Sparse::rwdata
+                                    | Sparse::rwridx (write-access to ridx)
+                                    | Sparse::rwcidx (write-access to cidx)
+
+The virtual functions `octave_base_value::all` and `octave_base_value::any`
+have been changed to throw an error if the subclass type does not override `all`
+and `any`.  The `all` and `any` function only work on numeric or logical input.
+They will error if passed any other input.  In previous versions of Octave,
+`all` and `any` returned 0 if the input type was neither numeric nor logical,
+which is not MATLAB compatible.
+
+### Command-line options removed without the usual deprecation period
+
+The command-line option `-?` as a synonym for `-h` or `--help` has been removed
+from
+
+* mkoctfile
+* octave-config
+
+### Build system
+
+- Octave now requires a C++ compiler that is compliant with C++20 (preferably
+  with GNU extensions).
 
 ### Old release news
 

@@ -18,9 +18,7 @@ Summary of important user-visible changes for version 11 (2026-02-18):
 ### General improvements
 
 - The internal interface to Java has been updated to be more memory-efficient
-  (faster culling of unused objects).  Building Octave from source code with
-  Java support now requires JDK 1.9 or newer.  Distributed, precompiled
-  versions of Octave will run with any JVM.
+  (faster culling of unused objects).  Octave now requires JDK 1.9 or newer.
 
 - The `pkg` command has these user-visible changes:
   * The package installation command `pkg install foo` now automatically
@@ -299,6 +297,10 @@ major release after 11):
     * `f_f_Mapper`
     * `f_fc_Mapper`
     * `fc_fc_Mapper`
+
+Input to the functions `any` and `all` that is non-numeric and non-logical has
+been deprecated in Octave 11 and will throw an error in Octave 12 (or whatever
+version is the first major release after Octave 11).
 
 The following features were deprecated in Octave 9 and have been removed
 from Octave 11.

@@ -29,9 +29,9 @@ from your shell.
 * Quitting Octave::
 * Getting Help::
 * Command Line Editing::
-* Errors::
+* How Octave Reports Errors::
 * Executable Octave Programs::
-* Comments::
+* Comments in Octave Programs::
 @end menu
 
 @node Invoking Octave from the Command Line
@@ -522,9 +522,9 @@ characters such as @kbd{Meta-u} are written as @kbd{M-u}.
 @menu
 * Cursor Motion::
 * Killing and Yanking::
-* Commands for Text::
+* Commands for Changing Text::
 * Commands for Completion::
-* Commands for History::
+* Commands for Manipulating the History::
 * Customizing readline::
 * Customizing the Prompt::
 * Diary and Echo Commands::
@@ -638,7 +638,7 @@ ring is not line specific; the text that you killed on a previously
 typed line is available to be yanked back later, when you are typing
 another line.
 
-@node Commands for Text
+@node Commands for Changing Text
 @subsection Commands for Changing Text
 
 The following commands can be used for entering characters that would
@@ -678,7 +678,7 @@ of the word.
 @end table
 
 @node Commands for Completion
-@subsection Letting Readline Type for You
+@subsection Commands for Completion
 @cindex command completion
 
 The following commands allow Octave to complete command and variable
@@ -697,7 +697,7 @@ List the possible completions of the text before the cursor.
 
 @DOCSTRING(completion_matches)
 
-@node Commands for History
+@node Commands for Manipulating the History
 @subsection Commands for Manipulating the History
 @cindex command history
 @cindex input history
@@ -871,7 +871,7 @@ some kinds of problems.
 
 @DOCSTRING(echo)
 
-@node Errors
+@node How Octave Reports Errors
 @section How Octave Reports Errors
 @cindex error messages
 @cindex messages, error
@@ -906,6 +906,12 @@ case, Octave generated an error message because the keyword for
 the logical or operator (@code{||}) was misspelled.  It marked the error
 at the third @samp{|} because the code leading up to this was correct
 but the final @samp{|} was not understood.
+
+In the case where Octave is reading instructions from a function or script
+file, it can be configured to report parsing errors in minimal form (file name,
+line number, column number) or in an extended form that prints the problematic
+line of code and a caret (@samp{^}) at the point where parsing failed.
+@xref{XREFdiagnostics_show_caret,,diagnostics_show_caret}.
 
 Another class of error message occurs at evaluation time.  These
 errors are called @dfn{run-time errors}, or sometimes
@@ -1116,7 +1122,7 @@ or from Octave with
 mysin (1.5)
 @end example
 
-@node Comments
+@node Comments in Octave Programs
 @section Comments in Octave Programs
 @cindex comments
 @cindex use of comments

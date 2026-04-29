@@ -312,6 +312,22 @@ output_system::page_screen_output (const octave_value_list& args,
                                 "page_screen_output");
 }
 
+bool
+output_system::page_screen_output (bool flag)
+{
+#if defined (_WIN32) || defined (__CYGWIN__)
+  // On Windows, the GUI does not support the pager if the console was created
+  // with ALLOC_CONSOLE_MODE_NO_WINDOW.
+  if (flag && application::is_gui_running ())
+    warning_with_id ("Octave:no-pager",
+                     "more: enabling the pager is not supported using the GUI");
+#endif
+
+  bool val = m_page_screen_output;
+  m_page_screen_output = flag;
+  return val;
+}
+
 std::string
 output_system::pager_command () const
 {
@@ -409,7 +425,14 @@ output_system::sync (const char *buf, int len)
                            || (m_really_flush_to_pager
                                && m_page_screen_output
                                && ! m_page_output_immediately
-                               && ! more_than_a_screenful (buf, len)));
+                               && ! more_than_a_screenful (buf, len))
+#if defined (_WIN32) || defined (__CYGWIN__)
+                           // On Windows, the GUI does not support the pager if
+                           // the console was created with
+                           // ALLOC_CONSOLE_MODE_NO_WINDOW.
+                           || application::is_gui_running ()
+#endif
+                           );
 
       if (len > 0)
         {
@@ -606,6 +629,8 @@ Turn output pagination on or off.
 Without an argument, @code{more} toggles the current state.
 
 The current state can be determined via @code{page_screen_output}.
+
+Using the pager is not supported on Windows in the GUI.
 @seealso{page_screen_output, page_output_immediately, PAGER, PAGER_FLAGS}
 @end deftypefn */)
 {
@@ -709,7 +734,7 @@ for the terminal window that is longer than one page is sent through a
 pager.
 
 This allows you to view one screenful at a time.  Some pagers
-(such as @code{less}---@pxref{Installation}) are also capable of moving
+(such as @code{less}---@pxref{Installing Octave}) are also capable of moving
 backward on the output.
 
 When called from inside a function with the @qcode{"local"} option, the
@@ -733,7 +758,7 @@ to display terminal output on your system.
 
 The default value is normally @qcode{"less"}, @qcode{"more"}, or
 @qcode{"pg"}, depending on what programs are installed on your system.
-@xref{Installation}.
+@xref{Installing Octave}.
 
 When called from inside a function with the @qcode{"local"} option, the
 variable is changed locally for the function and any subroutines it calls.
