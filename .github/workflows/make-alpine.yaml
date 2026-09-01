@@ -26,7 +26,7 @@ jobs:
           cat /proc/cpuinfo
 
       - name: checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: install dependencies
         uses: jirutka/setup-alpine@v1
@@ -65,7 +65,6 @@ jobs:
             bison
             curl-dev
             fftw-dev
-            fltk-dev
             fontconfig-dev
             freetype-dev
             ghostscript-dev
@@ -114,7 +113,7 @@ jobs:
 
       - name: restore ccache
         # setup the github cache used to maintain the ccache from one job to the next
-        uses: actions/cache/restore@v5
+        uses: actions/cache/restore@v6
         with:
           # location of the ccache of the chroot in the root file system
           path: /home/runner/rootfs/alpine-latest-x86/home/runner/.ccache
@@ -208,7 +207,7 @@ jobs:
 
       - name: save ccache
         # Save the cache after we are done (successfully) building
-        uses: actions/cache/save@v5
+        uses: actions/cache/save@v6
         with:
           path: /home/runner/rootfs/alpine-latest-x86/home/runner/.ccache
           key: ${{ steps.ccache-prepare.outputs.key }}
@@ -226,7 +225,7 @@ jobs:
         continue-on-error: true
         # Displaying the log shouldn't take long. Cancel the step if it does.
         timeout-minutes: 5
-        run: cat ./.build/test/fntests.log
+        run: cat ./.build/test/test_suite.log
 
       - name: test history file creation
         # see bug #62365
@@ -266,15 +265,26 @@ jobs:
             octave --eval "pkg test ${package}"
             echo "::endgroup::"
             echo "::group::Test log for ${package}"
-            cat ${GITHUB_WORKSPACE}/fntests.log
+            cat ${GITHUB_WORKSPACE}/test_suite.log
             echo "::endgroup::"
            done
 
       - name: analyze test suite results
-        # Make sure the test summary lists 0 "FAIL"s and no "REGRESSION"
+        # Make sure the test summary lists 0 "FAIL"s.
+        # We have to tolerate 4 "REGRESSION"s (2026-08-18).
+        # "::warning::" or "::error::" will emit messages to the "Annotations"
+        # section of the workflow run.
         run:  |
-          [ -n "$(grep -e "FAIL\s*0" ./test-suite.log)" ] \
-            || echo "::warning::At least one test failed"
-          [ -z "$(grep -e "REGRESSION" ./test-suite.log)" ] \
-            || echo "::warning::At least one regression in test suite"
-          echo Finished analyzing test suite results.
+          fail=0
+          if [ -z "$(grep -e 'FAIL\s*0' ./test-suite.log)" ]; then
+            echo "::error::At least one test failed"
+            fail=1
+          fi
+          if [ -n "$(grep -e 'REGRESSION' ./test-suite.log)" ]; then
+            echo "::warning::At least one regression in test suite"
+          fi
+          if [ $fail -eq 1 ]; then
+            exit 1
+          else
+            echo "No unknown failing tests."
+          fi

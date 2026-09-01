@@ -350,8 +350,6 @@ FIRfilter
 fitboxtotext
 FIXME
 flac
-fltk
-FLTK
 fminsearch
 fminunc
 fontconfig
@@ -950,7 +948,6 @@ randn
 randp
 randperm
 rangle
-ranlib
 RapidJSON
 rasterized
 rceil

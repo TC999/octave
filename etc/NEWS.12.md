@@ -11,7 +11,6 @@ Summary of important user-visible changes for version 12 (yyyy-mm-dd):
 * The constructors of `classdef` classes now support returning more than one
   output argument.  The first output argument must be the constructed object.
 
-
 ### Graphical User Interface
 
 * When opening a file from the Find Files dialog, all occurrences of the search
@@ -19,6 +18,8 @@ Summary of important user-visible changes for version 12 (yyyy-mm-dd):
 
 ### Graphics backend
 
+* The FLTK graphics toolkit has been removed.  The Qt graphics toolkit is the
+  supported OpenGL-based graphics backend.
 
 ### Matlab compatibility
 
@@ -160,6 +161,11 @@ from
 
 - Octave now requires a C++ compiler that is compliant with C++20 (preferably
   with GNU extensions).
+
+- Octave now requires GNU Make 4.3 or higher.
+
+- The configure option `--enable-link-all-dependencies` is no longer required
+  and has been removed.
 
 ### Old release news
 
